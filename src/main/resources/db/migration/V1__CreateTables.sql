@@ -1,40 +1,56 @@
-CREATE TABLE IF NOT EXISTS client (
-    client_id int NOT NULL,
-    client_name varchar(100) NOT NULL,
-    client_surname varchar(100) NOT NULL,
-    client_phone char(13) UNIQUE,
-    PRIMARY KEY (client_id)
+CREATE TABLE IF NOT EXISTS user (
+    id int IDENTITY NOT NULL PRIMARY KEY,
+    login varchar(50) NOT NULL UNIQUE,
+    password varchar(50) NOT NULL,
+    name varchar(50) NOT NULL,
+    surname varchar(50) NOT NULL,
+    phone char(13) UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS role
+(
+    id int NOT NULL,
+    name char(20) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS user_role
+(
+    user_id int NOT NULL,
+    role_id int NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (role_id) REFERENCES role (id)
 );
 
 CREATE TABLE IF NOT EXISTS membership (
-    client_id int NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES client (client_id),
-    client_discount int NOT NULL,
-    expiration_date date NOT NULL
+    user_id int NOT NULL,
+    discount int NOT NULL,
+    expiration_date date NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
 CREATE TABLE IF NOT EXISTS coach (
-    coach_id int NOT NULL,
-    coach_name varchar(100) NOT NULL,
-    coach_surname varchar(100) NOT NULL,
-    coach_phone char(13) UNIQUE,
-    type_of_activity varchar(100) NOT NULL,
-    price_of_activity decimal (4,2) NOT NULL,
-    PRIMARY KEY (coach_id)
+    id int IDENTITY NOT NULL PRIMARY KEY,
+    name varchar(50) NOT NULL,
+    surname varchar(50) NOT NULL,
+    phone char(13) UNIQUE,
+    type_of_activity varchar(50) NOT NULL,
+    price_of_activity decimal (4,2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS status (
-    status_id int NOT NULL,
-    status_name varchar(100) NOT NULL,
-    PRIMARY KEY (status_id)
+CREATE TABLE IF NOT EXISTS schedule (
+    id int NOT NULL,
+    time_interval varchar(13) NOT NULL,
+    PRIMARY KEY (time_interval)
 );
 
 CREATE TABLE IF NOT EXISTS service_info (
-    client_id int NOT NULL,
+    user_id int,
     coach_id int NOT NULL,
-    status_id int NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES client (client_id),
-    FOREIGN KEY (coach_id) REFERENCES coach (coach_id),
-    FOREIGN KEY (status_id) REFERENCES status (status_id),
-    date_info date NOT NULL
+    date_info date NOT NULL,
+    time_interval varchar(13) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (coach_id) REFERENCES coach (id),
+    FOREIGN KEY (time_interval) REFERENCES schedule (id)
 );
