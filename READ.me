@@ -6,7 +6,7 @@ Gym project
     атрибуты id, login, password, name, surname, phone
 
 -Информацию о тренерах (coach)
-    атрибуты name, surname, phone, type_of_activity, price_of_activity
+    атрибуты name, surname, phone, specialization, price_of_activity
 
 -Информация о ролях и таблица-связь пользователя_роль (role & user_role)
     атрибуты id, name для role
@@ -27,7 +27,7 @@ Gym project
 ----------------------------------------------------------------------------------------------------------------------
 Определены 2 роли: client и admin
 
-client: заполняет поля таблицы User и записывается в свободный слот (поле user_id) в service_info
+client: заполняет поля таблицы User, просматривает инфу о тренерах и записывается в свободный слот (поле user_id) в service_info
 admin: добавляет пользователей, тренеров, добавляет членские карты, создает слот в service_info
 
 

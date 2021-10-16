@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS coach (
     name varchar(50) NOT NULL,
     surname varchar(50) NOT NULL,
     phone char(13) UNIQUE,
-    type_of_activity varchar(50) NOT NULL,
+    specialization varchar(50) NOT NULL,
     price_of_activity decimal (4,2) NOT NULL
 );
 
