@@ -1,6 +1,7 @@
 package com.itrex.java.lab.entity;
 
 public class User {
+
     private Integer id;
     private String login;
     private String password;
@@ -67,4 +68,5 @@ public class User {
                 ", phone='" + phone + '\'' +
                 '}';
     }
+
 }

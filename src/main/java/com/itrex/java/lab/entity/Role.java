@@ -1,6 +1,7 @@
 package com.itrex.java.lab.entity;
 
 public class Role {
+
     private Integer id;
     private String name;
 

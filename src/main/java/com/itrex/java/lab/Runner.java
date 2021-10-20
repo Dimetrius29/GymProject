@@ -28,6 +28,8 @@ public class Runner {
         List<User> users = userRepository.selectAll();
         System.out.println("All users:\n" + users);
 
+        System.out.println("Select user with id=2:\n" + userRepository.selectById(2));
+
         User firstUser = new User();
         firstUser.setLogin("Ron");
         firstUser.setPassword("fd");

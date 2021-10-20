@@ -3,11 +3,7 @@ package com.itrex.java.lab.repository.impl;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.repository.UserRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
@@ -22,6 +18,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     private static final String PHONE_COLUMN = "phone";
 
     private static final String SELECT_ALL_QUERY = "SELECT * FROM user";
+    private static final String SELECT_BY_ID_QUERY = "SELECT * FROM user WHERE id=";
     private static final String INSERT_USER_QUERY = "INSERT INTO user(login, password, name, surname, phone) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE_USER_QUERY = "UPDATE user SET login=?, password=?, name=?, surname=?, phone=? WHERE id=?";
     private static final String DELETE_USER_QUERY = "DELETE FROM user WHERE id=?";
@@ -32,9 +29,11 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         this.dataSource = dataSource;
     }
 
+    @Override
     public List<User> selectAll() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection(); Statement stm = connection.createStatement();
+        try (Connection connection = dataSource.getConnection();
+             Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
             while (resultSet.next()) {
                 User user = new User();
@@ -54,6 +53,26 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User selectById(Integer id) {
+        User user = new User();
+        try (Connection connection = dataSource.getConnection();
+             Statement stm = connection.createStatement();
+             ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
+            if (resultSet.next()) {
+                user.setId(id);
+                user.setLogin(resultSet.getString(LOGIN_COLUMN));
+                user.setPassword(resultSet.getString(PASSWORD_COLUMN));
+                user.setName(resultSet.getString(NAME_COLUMN));
+                user.setSurname(resultSet.getString(SURNAME_COLUMN));
+                user.setPhone(resultSet.getString(PHONE_COLUMN));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
     public User add(User user) {
         try (Connection connection = dataSource.getConnection()) {
             insertUser(user, connection);
@@ -64,13 +83,13 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> addAll(List<User> users) {
+    public void addAll(List<User> users) {
         List<User> addAllUser = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
             try {
                 for (User user : users) {
-                    addAllUser.add(insertUser(user, connection));
+                    insertUser(user, connection);
                 }
                 connection.commit();
             } catch (SQLException ex) {
@@ -82,14 +101,17 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return addAllUser;
     }
 
     @Override
     public User update(User user) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_QUERY)) {
-            preparedStatementSaved(user, preparedStatement);
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, user.getName());
+            preparedStatement.setString(4, user.getSurname());
+            preparedStatement.setString(5, user.getPhone());
             preparedStatement.setInt(6, user.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -109,21 +131,13 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         }
     }
 
-    private User getUser(ResultSet resultSet, User user) throws SQLException {
-
-        user.setId(resultSet.getInt(ID_COLUMN));
-        user.setLogin(resultSet.getString(LOGIN_COLUMN));
-        user.setPassword(resultSet.getString(PASSWORD_COLUMN));
-        user.setName(resultSet.getString(NAME_COLUMN));
-        user.setSurname(resultSet.getString(SURNAME_COLUMN));
-        user.setPhone(resultSet.getString(PHONE_COLUMN));
-
-        return user;
-    }
-
     private User insertUser(User user, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatementSaved(user, preparedStatement);
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, user.getName());
+            preparedStatement.setString(4, user.getSurname());
+            preparedStatement.setString(5, user.getPhone());
 
             final int effectiveRows = preparedStatement.executeUpdate();
 
@@ -136,13 +150,5 @@ public class JDBCUserRepositoryImpl implements UserRepository {
             }
         }
         return user;
-    }
-
-    private void preparedStatementSaved(User user, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.setString(1, user.getLogin());
-        preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setString(3, user.getName());
-        preparedStatement.setString(4, user.getSurname());
-        preparedStatement.setString(5, user.getPhone());
     }
 }

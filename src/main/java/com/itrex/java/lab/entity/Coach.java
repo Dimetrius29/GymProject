@@ -1,12 +1,13 @@
 package com.itrex.java.lab.entity;
 
 public class Coach {
+
     private Integer id;
     private String name;
     private String surname;
     private String phone;
     private String specialization;
-    private Double price_of_activity;
+    private Double priceOfActivity;
 
     public Integer getId() {
         return id;
@@ -48,12 +49,12 @@ public class Coach {
         this.specialization = specialization;
     }
 
-    public Double getPrice_of_activity() {
-        return price_of_activity;
+    public Double getPriceOfActivity() {
+        return priceOfActivity;
     }
 
-    public void setPrice_of_activity(Double price_of_activity) {
-        this.price_of_activity = price_of_activity;
+    public void setPriceOfActivity(Double priceOfActivity) {
+        this.priceOfActivity = priceOfActivity;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Coach {
                 ", surname='" + surname + '\'' +
                 ", phone='" + phone + '\'' +
                 ", specialization='" + specialization + '\'' +
-                ", price_of_activity=" + price_of_activity +
+                ", price_of_activity=" + priceOfActivity +
                 '}';
     }
 }

@@ -6,8 +6,9 @@ import java.util.List;
 public interface RoleRepository {
 
     List<Role> selectAll();
+    Role selectById(Integer id);
     Role add(Role role);
     List<Role> addAll(List<Role> roles);
     Role update(Role role);
-    boolean remove(Integer id);
+    void delete(Integer id);
 }

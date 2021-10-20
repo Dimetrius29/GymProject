@@ -1,15 +1,16 @@
 package com.itrex.java.lab.entity;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ServiceInfo {
+public class Training {
 
     private User user;
     private Coach coach;
     private Date date;
-    private SimpleDateFormat startTime;
-    private SimpleDateFormat endTime;
+    private Time startTime;
+    private Time endTime;
 
     public User getUser() {
         return user;
@@ -35,25 +36,25 @@ public class ServiceInfo {
         this.date = date;
     }
 
-    public SimpleDateFormat getStartTime() {
+    public Time getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(SimpleDateFormat startTime) {
+    public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
 
-    public SimpleDateFormat getEndTime() {
+    public Time getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(SimpleDateFormat endTime) {
+    public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
 
     @Override
     public String toString() {
-        return "ServiceInfo{" +
+        return "Training{" +
                 "user=" + user +
                 ", coach=" + coach +
                 ", date=" + date +
@@ -61,6 +62,4 @@ public class ServiceInfo {
                 ", endTime=" + endTime +
                 '}';
     }
-
-
 }
