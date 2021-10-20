@@ -1,7 +1,6 @@
 package com.itrex.java.lab.repository.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
@@ -10,7 +9,6 @@ import com.itrex.java.lab.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
@@ -23,7 +21,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectAll_validData_shouldReturnExistUsers() {
+    public void selectAll_validData_shouldReturnExistUsersTest() {
         //given && when
         int expected = 4;
         final List<User> result = repository.selectAll();
@@ -34,7 +32,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectUser() {
+    public void selectByID_validData_shouldReturnCorrectUserTest() {
         //given
         int id = 1;
         User expected = new User();
