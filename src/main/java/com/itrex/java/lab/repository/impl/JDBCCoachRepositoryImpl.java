@@ -1,7 +1,7 @@
 package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.Coach;
-import com.itrex.java.lab.entity.Coach;
+import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.CoachRepository;
 
 import java.sql.Connection;
@@ -27,6 +27,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
     private static final String INSERT_COACH_QUERY = "INSERT INTO coach(name, surname, phone, specialization, price_of_activity) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE_COACH_QUERY = "UPDATE coach SET name=?, surname=?, phone=?, specialization=?, price_of_activity=? WHERE id=?";
     private static final String DELETE_COACH_QUERY = "DELETE FROM coach WHERE id=?";
+    private static final String DELETE_TRAINING_BY_COACH_ID = "DELETE FROM training WHERE coach_id=?";
 
     private DataSource dataSource;
 
@@ -35,7 +36,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public List<Coach> selectAll() {
+    public List<Coach> selectAll() throws GymException {
         List<Coach> coaches = new ArrayList<>();
         try (Connection connection = dataSource.getConnection(); Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
@@ -51,13 +52,13 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
                 coaches.add(coach);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new GymException("SELECT ALL COACHES EXCEPTION: ", ex);
         }
         return coaches;
     }
 
     @Override
-    public Coach selectById(Integer id) {
+    public Coach selectById(Integer id) throws GymException {
         Coach coach = new Coach();
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
@@ -69,25 +70,27 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
                 coach.setPhone(resultSet.getString(PHONE_COLUMN));
                 coach.setSpecialization(resultSet.getString(SPECIALIZATION_COLUMN));
                 coach.setPriceOfActivity(resultSet.getDouble(PRICE_OF_ACTIVITY_COLUMN));
+            } else {
+                throw new NotFoundEx();
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException | NotFoundEx ex) {
+            throw new GymException("SELECT COACH BY ID EXCEPTION: ", ex);
         }
         return coach;
     }
 
     @Override
-    public Coach add(Coach coach) {
+    public Coach add(Coach coach) throws GymException {
         try (Connection connection = dataSource.getConnection()) {
             insertCoach(coach, connection);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new GymException("ADD COACH EXCEPTION: ", ex);
         }
         return coach;
     }
 
     @Override
-    public List<Coach> addAll(List<Coach> coaches) {
+    public List<Coach> addAll(List<Coach> coaches) throws GymException {
         List<Coach> addAllCoach = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
@@ -97,19 +100,19 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
                 }
                 connection.commit();
             } catch (SQLException ex) {
-                ex.printStackTrace();
                 connection.rollback();
+                throw new SQLException("CONNECTION ROLLBACK: ", ex);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new GymException("ADD ALL COACHES FAILED: ", ex);
         }
         return addAllCoach;
     }
 
     @Override
-    public Coach update(Coach coach) {
+    public Coach update(Coach coach) throws GymException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_COACH_QUERY)) {
             preparedStatement.setString(1, coach.getName());
@@ -120,19 +123,31 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
             preparedStatement.setInt(6, coach.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new GymException("UPDATE COACH EXCEPTION: ", ex);
         }
         return coach;
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteCoach(Integer id) throws GymException {
+        deleteTrainingByCoach(id);
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_COACH_QUERY)) {
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            throw new GymException("DELETE COACH EXCEPTION: ", ex);
+        }
+    }
+
+    @Override
+    public void deleteTrainingByCoach(Integer coachId) throws GymException {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TRAINING_BY_COACH_ID)) {
+            preparedStatement.setInt(1, coachId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new GymException("DELETE USER FROM TRAINING EXCEPTION: ", ex);
         }
     }
 
@@ -154,7 +169,9 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
                 }
             }
         }
-
         return coach;
+    }
+
+    public class NotFoundEx extends Exception {
     }
 }

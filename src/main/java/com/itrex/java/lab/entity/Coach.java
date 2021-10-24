@@ -1,5 +1,7 @@
 package com.itrex.java.lab.entity;
 
+import java.util.Objects;
+
 public class Coach {
 
     private Integer id;
@@ -59,7 +61,7 @@ public class Coach {
 
     @Override
     public String toString() {
-        return "Coach{" +
+        return "\nCoach{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
@@ -67,5 +69,18 @@ public class Coach {
                 ", specialization='" + specialization + '\'' +
                 ", price_of_activity=" + priceOfActivity +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coach coach = (Coach) o;
+        return id.equals(coach.id) && name.equals(coach.name) && surname.equals(coach.surname) && phone.equals(coach.phone) && specialization.equals(coach.specialization) && priceOfActivity.equals(coach.priceOfActivity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, phone, specialization, priceOfActivity);
     }
 }

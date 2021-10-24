@@ -1,18 +1,18 @@
+CREATE TABLE IF NOT EXISTS role
+(
+    id int IDENTITY NOT NULL,
+    name char(20) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE (name)
+);
+
 CREATE TABLE IF NOT EXISTS user (
     id int IDENTITY NOT NULL PRIMARY KEY,
     login varchar(50) NOT NULL UNIQUE,
     password varchar(255) NOT NULL,
     name varchar(50) NOT NULL,
     surname varchar(50) NOT NULL,
-    phone char(13) UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS role
-(
-    id int NOT NULL,
-    name char(20) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE (name)
+    phone char(13) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_role

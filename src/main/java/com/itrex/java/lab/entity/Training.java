@@ -54,7 +54,7 @@ public class Training {
 
     @Override
     public String toString() {
-        return "Training{" +
+        return "\nTraining{" +
                 "user=" + user +
                 ", coach=" + coach +
                 ", date=" + date +

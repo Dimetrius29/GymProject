@@ -1,8 +1,7 @@
 package com.itrex.java.lab.repository.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import com.itrex.java.lab.entity.User;
+import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.UserRepository;
 
@@ -10,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 
@@ -21,7 +23,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectAll_validData_shouldReturnExistUsersTest() {
+    public void selectAll_validData_shouldReturnExistUsersTest() throws GymException {
         //given && when
         int expected = 4;
         final List<User> result = repository.selectAll();
@@ -32,7 +34,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectUserTest() {
+    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException, JDBCUserRepositoryImpl.NotFoundEx {
         //given
         int id = 1;
         User expected = new User();
@@ -51,16 +53,65 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void add_validData_shouldAddUserTest() {
-       //given
+    public void assignRole_invalidData_ShouldReturnException() {
+        Integer userId = 99;
+        Integer roleId = 1;
+        Exception thrownEx = null;
+
+        //when
+        try {
+            repository.assignRole(userId, roleId);
+        } catch (GymException ex) {
+            thrownEx = ex;
+        }
+        //then
+        assertNotNull(thrownEx);
+    }
+
+    @Test
+    public void getAllUsersByRole_validData_shouldReturnExceptionTest() {
+        //given
+        cleanDB();
+        Exception thrownEx = null;
+
+        //when
+        try {
+            repository.getAllUsersByRole("admin");
+        } catch (GymException ex) {
+            thrownEx = ex;
+        }
+
+        //then
+        assertNotNull(thrownEx);
+    }
+
+    @Test
+    public void selectById_invalidData_shouldReturnException() {
+        //given
+        Integer id = 99;
+        Exception thrownEx = null;
+
+        //when
+        try {
+            repository.selectById(id);
+        } catch (GymException | JDBCUserRepositoryImpl.NotFoundEx ex) {
+            thrownEx = ex;
+        }
+        //then
+        assertNotNull(thrownEx);
+    }
+
+    @Test
+    public void add_validData_shouldAddAllUsersTest() throws GymException {
+        //given
         ArrayList<User> expected = new ArrayList<>();
         User user1 = new User();
         user1.setId(5);
-        user1.setLogin("ret");
+        user1.setLogin("ret4");
         user1.setPassword("qwerty");
-        user1.setName("Pol");
+        user1.setName("Polk");
         user1.setSurname("Shone");
-        user1.setPhone("+37544585645");
+        user1.setPhone("+3754477445");
 
         User user2 = new User();
         user2.setId(6);
@@ -68,20 +119,20 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
         user2.setPassword("qwerty");
         user2.setName("Pol");
         user2.setSurname("Shone");
-        user2.setPhone("+37544585645");
+        user2.setPhone("+37544588845");
         expected.add(user1);
         expected.add(user2);
 
         //when
         repository.addAll(expected);
-        List <User> actual = repository.selectAll();
+        List<User> expectedUsers = repository.selectAll();
 
         //then
-        assertEquals(actual.size(), 6);
+        assertEquals(expectedUsers.size(), 6);
     }
 
     @Test
-    public void addALL_validData_shouldAddALLUsersTest() {
+    public void add_validData_shouldAddUserTest() throws GymException {
         //given
         User expected = new User();
         expected.setId(5);
@@ -99,7 +150,31 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteUser_validData_shouldDeleteExistUser() {
+    public void add_invalidData_shouldThrowExceptionTest() {
+        //given
+        User expected = new User();
+        expected.setId(5);
+        expected.setLogin(null);
+        expected.setPassword("qwerty");
+        expected.setName("Pol");
+        expected.setSurname("Shone");
+        expected.setPhone("+37544585645");
+
+        Exception thrownEx = null;
+
+        //when
+        try {
+            repository.add(expected);
+        } catch (GymException ex) {
+            thrownEx = ex;
+        }
+
+        //then
+        assertNotNull(thrownEx);
+    }
+
+    @Test
+    public void deleteUser_validData_shouldDeleteExistUser() throws GymException {
         //given
         int id = 1;
         int expected = 3;
@@ -114,7 +189,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void update_validData_shouldReturnChangedUserTest() {
+    public void update_validData_shouldReturnChangedUserTest() throws GymException {
         //given
         User user = new User();
         user.setId(5);
