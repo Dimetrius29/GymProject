@@ -1,15 +1,10 @@
 package com.itrex.java.lab.repository.impl;
 
-import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Training;
-import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.TrainingRepository;
-import com.itrex.java.lab.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;

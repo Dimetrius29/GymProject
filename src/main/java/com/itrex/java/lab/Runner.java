@@ -4,7 +4,6 @@ import static com.itrex.java.lab.properties.Properties.H2_PASSWORD;
 import static com.itrex.java.lab.properties.Properties.H2_URL;
 import static com.itrex.java.lab.properties.Properties.H2_USER;
 
-import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.RoleRepository;
@@ -13,13 +12,11 @@ import com.itrex.java.lab.repository.impl.JDBCRoleRepositoryImpl;
 import com.itrex.java.lab.repository.impl.JDBCUserRepositoryImpl;
 import com.itrex.java.lab.service.FlywayService;
 
-import java.sql.SQLException;
-
 import org.h2.jdbcx.JdbcConnectionPool;
 
 public class Runner {
 
-    public static void main(String[] args) throws GymException, JDBCUserRepositoryImpl.NotFoundEx {
+    public static void main(String[] args) throws GymException {
         System.out.println("===================START APP======================");
         System.out.println("================START MIGRATION===================");
         FlywayService flywayService = new FlywayService();
