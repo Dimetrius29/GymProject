@@ -1,7 +1,9 @@
 package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.Coach;
+import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
 
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 
 public class JDBCCoachRepositoryImpl implements CoachRepository {
@@ -41,14 +44,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
         try (Connection connection = dataSource.getConnection(); Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
             while (resultSet.next()) {
-                Coach coach = new Coach();
-                coach.setId(resultSet.getInt(ID_COLUMN));
-                coach.setName(resultSet.getString(NAME_COLUMN));
-                coach.setSurname(resultSet.getString(SURNAME_COLUMN));
-                coach.setPhone(resultSet.getString(PHONE_COLUMN));
-                coach.setSpecialization(resultSet.getString(SPECIALIZATION_COLUMN));
-                coach.setPriceOfActivity(resultSet.getDouble(PRICE_OF_ACTIVITY_COLUMN));
-
+                Coach coach = getCoach(resultSet);
                 coaches.add(coach);
             }
         } catch (SQLException ex) {
@@ -58,24 +54,19 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public Coach selectById(Integer id) throws GymException {
-        Coach coach = new Coach();
+    public Coach selectById(Integer id) throws GymException, NotFoundEx {
+        Coach coach = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
             if (resultSet.next()) {
-                coach.setId(id);
-                coach.setName(resultSet.getString(NAME_COLUMN));
-                coach.setSurname(resultSet.getString(SURNAME_COLUMN));
-                coach.setPhone(resultSet.getString(PHONE_COLUMN));
-                coach.setSpecialization(resultSet.getString(SPECIALIZATION_COLUMN));
-                coach.setPriceOfActivity(resultSet.getDouble(PRICE_OF_ACTIVITY_COLUMN));
-            } else {
-                throw new NotFoundEx();
+                coach = getCoach(resultSet);
             }
-        } catch (SQLException | NotFoundEx ex) {
+        } catch (SQLException  ex) {
             throw new GymException("SELECT COACH BY ID EXCEPTION: ", ex);
         }
+        Optional<Coach> maybeCoach = Optional.ofNullable(coach);
+        coach = maybeCoach.orElseThrow(NotFoundEx::new);
         return coach;
     }
 
@@ -140,8 +131,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
         }
     }
 
-    @Override
-    public void deleteTrainingByCoach(Integer coachId) throws GymException {
+    private void deleteTrainingByCoach(Integer coachId) throws GymException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TRAINING_BY_COACH_ID)) {
             preparedStatement.setInt(1, coachId);
@@ -172,6 +162,15 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
         return coach;
     }
 
-    public class NotFoundEx extends Exception {
+    private Coach getCoach(ResultSet resultSet) throws SQLException {
+        Coach coach = new Coach();
+        coach.setId(resultSet.getInt(ID_COLUMN));
+        coach.setName(resultSet.getString(NAME_COLUMN));
+        coach.setSurname(resultSet.getString(SURNAME_COLUMN));
+        coach.setPhone(resultSet.getString(PHONE_COLUMN));
+        coach.setSpecialization(resultSet.getString(SPECIALIZATION_COLUMN));
+        coach.setPriceOfActivity(resultSet.getDouble(PRICE_OF_ACTIVITY_COLUMN));
+
+        return coach;
     }
 }

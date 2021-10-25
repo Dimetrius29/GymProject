@@ -1,7 +1,10 @@
 package com.itrex.java.lab.repository.impl;
 
+import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Role;
+import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.RoleRepository;
 
 import java.sql.Connection;
@@ -11,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 
 public class JDBCRoleRepositoryImpl implements RoleRepository {
@@ -38,9 +42,7 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
              Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_ALL_ROLES_QUERY)) {
             while (resultSet.next()) {
-                Role role = new Role();
-                role.setId(resultSet.getInt(ID_COLUMN));
-                role.setName(resultSet.getString(NAME_COLUMN));
+                Role role = getRole(resultSet);
                 roles.add(role);
             }
         } catch (SQLException ex) {
@@ -58,9 +60,7 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             {
                 while (resultSet.next()) {
-                    Role role = new Role();
-                    role.setId(resultSet.getInt(ID_COLUMN));
-                    role.setName(resultSet.getString(NAME_COLUMN));
+                    Role role = getRole(resultSet);
                     roles.add(role);
                 }
             }
@@ -71,20 +71,19 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public Role selectById(Integer id) throws GymException {
-        Role role = new Role();
+    public Role selectById(Integer id) throws GymException, NotFoundEx {
+        Role role = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
             if (resultSet.next()) {
-                role.setId(id);
-                role.setName(resultSet.getString(NAME_COLUMN));
-            } else {
-                throw new NotFoundEx();
+                role = getRole(resultSet);
             }
-        } catch (SQLException | NotFoundEx ex) {
+        } catch (SQLException ex) {
             throw new GymException("SELECT ROLE BY ID: ", ex);
         }
+        Optional<Role> maybeRole = Optional.ofNullable(role);
+        role = maybeRole.orElseThrow(NotFoundEx::new);
         return role;
     }
 
@@ -123,8 +122,7 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
         }
     }
 
-    @Override
-    public void deleteRoleFromLinkedTableById(Integer userId) throws GymException {
+    private void deleteRoleFromLinkedTableById(Integer userId) throws GymException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ROLE_FROM_USER_ROLE_QUERY)) {
             preparedStatement.setInt(1, userId);
@@ -151,6 +149,11 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
         return role;
     }
 
-    public class NotFoundEx extends Exception {
+    private Role getRole(ResultSet resultSet) throws SQLException {
+        Role role = new Role();
+        role.setId(resultSet.getInt(ID_COLUMN));
+        role.setName(resultSet.getString(NAME_COLUMN));
+
+        return role;
     }
 }

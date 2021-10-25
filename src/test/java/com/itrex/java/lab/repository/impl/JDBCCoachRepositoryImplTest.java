@@ -2,6 +2,7 @@ package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.CoachRepository;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
 
@@ -33,7 +34,7 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectCoachTest() throws GymException {
+    public void selectByID_validData_shouldReturnCorrectCoachTest() throws GymException, NotFoundEx {
         //given
         int id = 1;
         Coach expected = new Coach();
@@ -53,18 +54,8 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
 
     @Test
     public void selectById_invalidData_shouldThrowException() {
-        //given
-        Integer id = 99;
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.selectById(id);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-        //then
-        assertNotNull(thrownEx);
+        //given && when && then
+        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
     }
 
     @Test
@@ -126,17 +117,8 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
         expected.setSpecialization(null);
         expected.setPriceOfActivity(25.00);
 
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.add(expected);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        //when && then
+        assertThrows(GymException.class, () -> repository.add(expected));
     }
 
     @Test

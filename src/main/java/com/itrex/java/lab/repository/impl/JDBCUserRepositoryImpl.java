@@ -4,10 +4,12 @@ import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.repository.RoleRepository;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 
 public class JDBCUserRepositoryImpl implements UserRepository {
@@ -17,10 +19,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     private static final String NAME_COLUMN = "name";
     private static final String SURNAME_COLUMN = "surname";
     private static final String PHONE_COLUMN = "phone";
-    private static final String USER_ROLE_TABLE_USER_ID = "user_id";
-    private static final String USER_ROLE_TABLE_ROLE_ID = "role_id";
 
-    private static final String SELECT_ALL_ROLES_QUERY = "SELECT * FROM role";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM user";
     private static final String SELECT_BY_ID_QUERY = "SELECT * FROM user WHERE id=";
     private static final String SELECT_ALL_USERS_BY_ROLE = "SELECT * FROM user WHERE id IN (SELECT user_id FROM user_role WHERE role_id IN (SELECT id FROM role WHERE name = ?))";
@@ -32,7 +31,6 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     private static final String DELETE_USER_FROM_TRAINING_QUERY = "DELETE FROM training WHERE user_id=?";
 
     private DataSource dataSource;
-    private RoleRepository roleRepository;
 
     public JDBCUserRepositoryImpl(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -45,14 +43,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
              Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
             while (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getInt(ID_COLUMN));
-                user.setLogin(resultSet.getString(LOGIN_COLUMN));
-                user.setPassword(resultSet.getString(PASSWORD_COLUMN));
-                user.setName(resultSet.getString(NAME_COLUMN));
-                user.setSurname(resultSet.getString(SURNAME_COLUMN));
-                user.setPhone(resultSet.getString(PHONE_COLUMN));
-
+                User user = getUser(resultSet);
                 users.add(user);
             }
         } catch (SQLException ex) {
@@ -63,23 +54,18 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
     @Override
     public User selectById(Integer id) throws GymException, NotFoundEx {
-        User user = new User();
+        User user = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
              ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
             if (resultSet.next()) {
-                user.setId(id);
-                user.setLogin(resultSet.getString(LOGIN_COLUMN));
-                user.setPassword(resultSet.getString(PASSWORD_COLUMN));
-                user.setName(resultSet.getString(NAME_COLUMN));
-                user.setSurname(resultSet.getString(SURNAME_COLUMN));
-                user.setPhone(resultSet.getString(PHONE_COLUMN));
-            } else {
-                throw new NotFoundEx();
+                user = getUser(resultSet);
             }
         } catch (SQLException ex) {
             throw new GymException("SELECT USER BY ID EXCEPTION: ", ex);
         }
+        Optional<User> maybeUser = Optional.ofNullable(user);
+        user = maybeUser.orElseThrow(NotFoundEx::new);
         return user;
     }
 
@@ -92,13 +78,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             {
                 while (resultSet.next()) {
-                    User user = new User();
-                    user.setId(resultSet.getInt(ID_COLUMN));
-                    user.setLogin(resultSet.getString(LOGIN_COLUMN));
-                    user.setPassword(resultSet.getString(PASSWORD_COLUMN));
-                    user.setName(resultSet.getString(NAME_COLUMN));
-                    user.setSurname(resultSet.getString(SURNAME_COLUMN));
-                    user.setPhone(resultSet.getString(PHONE_COLUMN));
+                    User user = getUser(resultSet);
                     users.add(user);
                 }
             }
@@ -182,8 +162,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         }
     }
 
-    @Override
-    public void deleteUserFromLinkedTableById(Integer userId) throws GymException {
+    private void deleteUserFromLinkedTableById(Integer userId) throws GymException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_FROM_USER_ROLE_QUERY)) {
             preparedStatement.setInt(1, userId);
@@ -193,8 +172,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         }
     }
 
-    @Override
-    public void deleteUserFromTrainingById(Integer userId) throws GymException {
+    private void deleteUserFromTrainingById(Integer userId) throws GymException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_FROM_TRAINING_QUERY)) {
             preparedStatement.setInt(1, userId);
@@ -225,6 +203,15 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    public class NotFoundEx extends Exception {
+    private User getUser(ResultSet resultSet) throws SQLException, GymException {
+        User user = new User();
+        user.setId(resultSet.getInt(ID_COLUMN));
+        user.setLogin(resultSet.getString(LOGIN_COLUMN));
+        user.setPassword(resultSet.getString(PASSWORD_COLUMN));
+        user.setName(resultSet.getString(NAME_COLUMN));
+        user.setSurname(resultSet.getString(SURNAME_COLUMN));
+        user.setPhone(resultSet.getString(PHONE_COLUMN));
+
+        return user;
     }
 }

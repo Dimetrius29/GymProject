@@ -18,8 +18,7 @@ repositories {
 dependencies {
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.0.0'
-    implementation 'junit:junit:4.12'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 test {

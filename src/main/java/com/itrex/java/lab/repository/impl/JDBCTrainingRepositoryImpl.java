@@ -2,6 +2,7 @@ package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.Training;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.repository.CoachRepository;
 import com.itrex.java.lab.repository.TrainingRepository;
@@ -47,7 +48,7 @@ public class JDBCTrainingRepositoryImpl implements TrainingRepository{
 
                 trainings.add(training);
             }
-        } catch (SQLException | GymException | JDBCUserRepositoryImpl.NotFoundEx ex) {
+        } catch (SQLException | GymException | NotFoundEx ex) {
             throw new GymException("SELECT ALL TRAININGS EXCEPTION: ", ex);
         }
         return trainings;
@@ -100,8 +101,5 @@ public class JDBCTrainingRepositoryImpl implements TrainingRepository{
             preparedStatement.executeUpdate();
         }
         return training;
-    }
-
-    public class NotFoundEx extends Exception {
     }
 }

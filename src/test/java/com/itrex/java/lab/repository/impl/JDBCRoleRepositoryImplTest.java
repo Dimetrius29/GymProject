@@ -2,6 +2,7 @@ package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.RoleRepository;
 import org.junit.Test;
@@ -9,7 +10,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
 
@@ -33,7 +34,7 @@ public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectRoleTest() throws GymException {
+    public void selectByID_validData_shouldReturnCorrectRoleTest() throws GymException, NotFoundEx {
         //given
         int id = 1;
         Role expected = new Role();
@@ -49,18 +50,8 @@ public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
 
     @Test
     public void selectById_invalidData_shouldReturnException() {
-        //given
-        Integer id = 99;
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.selectById(id);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-        //then
-        assertNotNull(thrownEx);
+        //given && when && then
+        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
     }
 
     @Test
@@ -84,17 +75,8 @@ public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
         expected.setId(3);
         expected.setName(null);
 
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.add(expected);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        //when && then
+        assertThrows(GymException.class, () -> repository.add(expected));
     }
 
     @Test

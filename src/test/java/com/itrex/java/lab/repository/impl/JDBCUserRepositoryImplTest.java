@@ -2,6 +2,7 @@ package com.itrex.java.lab.repository.impl;
 
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.UserRepository;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 
@@ -34,7 +35,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException, JDBCUserRepositoryImpl.NotFoundEx {
+    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException, NotFoundEx {
         //given
         int id = 1;
         User expected = new User();
@@ -54,51 +55,21 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 
     @Test
     public void assignRole_invalidData_ShouldReturnException() {
-        Integer userId = 99;
-        Integer roleId = 1;
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.assignRole(userId, roleId);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-        //then
-        assertNotNull(thrownEx);
+        //given && when && then
+        assertThrows(GymException.class, () -> repository.assignRole(99, 1));
     }
 
     @Test
     public void getAllUsersByRole_validData_shouldReturnExceptionTest() {
-        //given
+        //given && when && then
         cleanDB();
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.getAllUsersByRole("admin");
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        assertThrows(GymException.class, () -> repository.getAllUsersByRole("admin"));
     }
 
     @Test
     public void selectById_invalidData_shouldReturnException() {
-        //given
-        Integer id = 99;
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.selectById(id);
-        } catch (GymException | JDBCUserRepositoryImpl.NotFoundEx ex) {
-            thrownEx = ex;
-        }
-        //then
-        assertNotNull(thrownEx);
+        //given && when && then
+        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
     }
 
     @Test
@@ -160,17 +131,8 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
         expected.setSurname("Shone");
         expected.setPhone("+37544585645");
 
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.add(expected);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        //when && then
+        assertThrows(GymException.class, () -> repository.add(expected));
     }
 
     @Test
@@ -200,10 +162,10 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
         user.setPhone("test");
 
         //when
-        user.setName("Pashka");
+        user.setName("Pavel");
         repository.update(user);
         String actual = user.getName();
-        String expected = "Pashka";
+        String expected = "Pavel";
 
         //then
         assertEquals(expected, actual);

@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
 
@@ -34,19 +34,9 @@ public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
 
     @Test
     public void selectAllTrainings_validData_shouldThrowExceptionTest() {
-        //given
+        //given && when && then
         cleanDB();
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.selectAll();
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        assertThrows(GymException.class, () -> repository.selectAll());
     }
 
     @Test
@@ -66,18 +56,8 @@ public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
 
     @Test
     public void deleteTrainingByCoach_inValidData_shouldThrowExceptionTest() {
-        //given
+        //given && when && then
         cleanDB();
-        Exception thrownEx = null;
-
-        //when
-        try {
-            repository.deleteTrainingByCoach(2);
-        } catch (GymException ex) {
-            thrownEx = ex;
-        }
-
-        //then
-        assertNotNull(thrownEx);
+        assertThrows(GymException.class, () -> repository.deleteTrainingByCoach(2));
     }
 }
