@@ -1,7 +1,6 @@
-package com.itrex.java.lab.repository.impl;
+package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.Coach;
-import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
@@ -62,7 +61,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
             if (resultSet.next()) {
                 coach = getCoach(resultSet);
             }
-        } catch (SQLException  ex) {
+        } catch (SQLException ex) {
             throw new GymException("SELECT COACH BY ID EXCEPTION: ", ex);
         }
         Optional<Coach> maybeCoach = Optional.ofNullable(coach);
@@ -81,7 +80,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public List<Coach> addAll(List<Coach> coaches) throws GymException {
+    public void addAll(List<Coach> coaches) throws GymException {
         List<Coach> addAllCoach = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
@@ -99,7 +98,6 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
         } catch (SQLException ex) {
             throw new GymException("ADD ALL COACHES FAILED: ", ex);
         }
-        return addAllCoach;
     }
 
     @Override

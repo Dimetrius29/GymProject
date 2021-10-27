@@ -1,15 +1,31 @@
 package com.itrex.java.lab.entity;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Training {
-
+@IdClass(Training.class)
+@Entity
+@Table(name = "training", schema = "public")
+public class Training implements Serializable {
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "coach_id")
     private Coach coach;
+
+    @Column(name = "date_info")
     private Date date;
+
+    @Column(name = "start_time")
     private Time startTime;
+
+    @Column(name = "end_time")
     private Time endTime;
 
     public User getUser() {

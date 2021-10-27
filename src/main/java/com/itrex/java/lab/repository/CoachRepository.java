@@ -11,7 +11,7 @@ public interface CoachRepository {
     List<Coach> selectAll() throws GymException;
     Coach selectById(Integer id) throws GymException, NotFoundEx;
     Coach add(Coach coach) throws GymException;
-    List<Coach> addAll(List<Coach> coaches) throws GymException;
+    void addAll(List<Coach> coaches) throws GymException;
     Coach update(Coach coach) throws GymException;
     void deleteCoach(Integer id) throws GymException;
 }

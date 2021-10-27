@@ -7,6 +7,7 @@ import com.itrex.java.lab.repository.TrainingRepository;
 
 import java.util.List;
 
+import com.itrex.java.lab.repository.impl.jdbc.JDBCTrainingRepositoryImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -5,6 +5,7 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.CoachRepository;
+import com.itrex.java.lab.repository.impl.jdbc.JDBCCoachRepositoryImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -9,6 +9,7 @@ import com.itrex.java.lab.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itrex.java.lab.repository.impl.jdbc.JDBCUserRepositoryImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -1,15 +1,36 @@
 package com.itrex.java.lab.entity;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "coach", schema = "public")
 public class Coach {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "surname")
     private String surname;
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "specialization")
     private String specialization;
+
+    @Column(name = "price_of_activity")
     private Double priceOfActivity;
+
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL)
+    private List<Training> trainings = new ArrayList<>();
 
     public Integer getId() {
         return id;

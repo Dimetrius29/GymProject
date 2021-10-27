@@ -7,13 +7,15 @@ import static com.itrex.java.lab.properties.Properties.H2_USER;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
+import com.itrex.java.lab.repository.TrainingRepository;
 import com.itrex.java.lab.repository.UserRepository;
-import com.itrex.java.lab.repository.impl.JDBCUserRepositoryImpl;
+import com.itrex.java.lab.repository.impl.jdbc.JDBCTrainingRepositoryImpl;
+import com.itrex.java.lab.repository.impl.jdbc.JDBCUserRepositoryImpl;
 import com.itrex.java.lab.service.FlywayService;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
-public class Runner {
+public class RunnerJDBC {
 
     public static void main(String[] args) throws GymException, NotFoundEx {
         System.out.println("===================START APP======================");
@@ -27,7 +29,6 @@ public class Runner {
         System.out.println("=============CREATE UserRepository================");
 
         UserRepository userRepository = new JDBCUserRepositoryImpl(jdbcConnectionPool);
-
         User firstUser = new User();
         firstUser.setLogin("Ron");
         firstUser.setPassword("fd");
