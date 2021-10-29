@@ -1,25 +1,24 @@
-package com.itrex.java.lab.repository.impl;
+package com.itrex.java.lab.repository.impl.hibernate;
 
+import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Training;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.TrainingRepository;
+import org.junit.Test;
 
 import java.util.List;
-
-import com.itrex.java.lab.repository.impl.jdbc.JDBCTrainingRepositoryImpl;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
-
+public class HibernateTrainingRepositoryImplTest extends BaseRepositoryTest {
     private final TrainingRepository repository;
 
-    public JDBCTrainingRepositoryImplTest() {
+    public HibernateTrainingRepositoryImplTest() {
         super();
-        repository = new JDBCTrainingRepositoryImpl(getConnectionPool());
+        repository = new HibernateTrainingRepositoryImpl(getSession());
     }
 
     @Test
@@ -41,7 +40,7 @@ public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteTrainingByCoach_validData_shouldDeleteExistTrainingTest() throws GymException {
+    public void deleteTrainingByCoach_validData_shouldDeleteExistTrainingTest() throws GymException{
         //given
         int coachId = 1;
         int expected = 2;
@@ -56,9 +55,18 @@ public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteTrainingByCoach_inValidData_shouldThrowExceptionTest() {
+    public void deleteTrainingByCoach_inValidData_shouldDeleteTrainingsTest() throws GymException {
         //given && when && then
-        cleanDB();
-        assertThrows(GymException.class, () -> repository.deleteTrainingByCoach(2));
+
+        int id = 1;
+        int expected = 2;
+
+        // when
+        repository.deleteTrainingByCoach(id);
+        List<Training> trainings = repository.selectAll();
+        int actual = trainings.size();
+
+        //then
+        assertEquals(actual, expected);
     }
 }

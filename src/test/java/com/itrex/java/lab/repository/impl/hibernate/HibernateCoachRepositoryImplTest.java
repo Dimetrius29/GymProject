@@ -1,11 +1,10 @@
-package com.itrex.java.lab.repository.impl;
+package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.CoachRepository;
-import com.itrex.java.lab.repository.impl.jdbc.JDBCCoachRepositoryImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,13 +13,12 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
-
+public class HibernateCoachRepositoryImplTest extends BaseRepositoryTest {
     private final CoachRepository repository;
 
-    public JDBCCoachRepositoryImplTest() {
+    public HibernateCoachRepositoryImplTest() {
         super();
-        repository = new JDBCCoachRepositoryImpl(getConnectionPool());
+        repository = new HibernateCoachRepositoryImpl(getSession());
     }
 
     @Test
@@ -151,6 +149,7 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
 
         //when
         coach.setName("Pasha");
+        repository.add(coach);
         repository.update(coach);
         String actual = coach.getName();
         String expected = "Pasha";

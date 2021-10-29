@@ -1,13 +1,12 @@
 package com.itrex.java.lab.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "user", schema = "public")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,18 +31,20 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Training> trainings = new ArrayList<>();
 
-
-
     @ManyToMany
     @JoinTable(
             name = "user_role", schema = "public",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Integer getId() {
@@ -93,6 +94,8 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+
 
     @Override
     public String toString() {

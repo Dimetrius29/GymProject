@@ -1,10 +1,15 @@
 package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.Coach;
+import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HibernateCoachRepositoryImpl implements CoachRepository {
     private final Session session;
@@ -14,37 +19,61 @@ public class HibernateCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public List<Coach> selectAll() {
-        return session.createQuery("From Coach", Coach.class).list();
-    }
-
-    @Override
-    public Coach selectById(Integer id) {
-        return session.get(Coach.class, id);
-    }
-
-    @Override
-    public Coach add(Coach coach) {
-        session.save(coach);
-        return coach;
-    }
-
-    @Override
-    public void addAll(List<Coach> coaches) {
-        for (Coach coach : coaches) {
-            session.save(coach);
+    public List<Coach> selectAll() throws GymException {
+        try {
+            return session.createQuery("From Coach", Coach.class).list();
+        } catch (Exception ex) {
+            throw new GymException(ex);
         }
     }
 
     @Override
-    public Coach update(Coach coach) {
-        session.update(coach);
+    public Coach selectById(Integer id) throws GymException, NotFoundEx {
+        Coach coach = null;
+        try {
+            coach = session.get(Coach.class, id);
+
+        } catch (Exception ex) {
+            throw new GymException(ex);
+        }
+        Optional<Coach> maybeCoach = Optional.ofNullable(coach);
+        coach = maybeCoach.orElseThrow(NotFoundEx::new);
         return coach;
     }
 
     @Override
-    public void deleteCoach(Integer id) {
+    public Coach add(Coach coach) throws GymException {
+        addTransaction(() -> session.save(coach));
+        return coach;
+    }
+
+    @Override
+    public void addAll(List<Coach> coaches) throws GymException {
+        for (Coach coach : coaches) {
+            addTransaction(() -> session.save(coach));
+        }
+    }
+
+    @Override
+    public Coach update(Coach coach) throws GymException {
+        addTransaction(() -> session.update(coach));
+        return coach;
+    }
+
+    @Override
+    public void deleteCoach(Integer id) throws GymException {
         Coach coach = session.get(Coach.class, id);
-        session.delete(coach);
+        addTransaction(() -> session.delete(coach));
+    }
+
+    private void addTransaction(Runnable runnable) throws GymException {
+        Transaction transaction = session.beginTransaction();
+        try {
+            runnable.run();
+            transaction.commit();
+        } catch (HibernateException ex) {
+            transaction.rollback();
+            throw new GymException(ex);
+        }
     }
 }

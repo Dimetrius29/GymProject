@@ -1,10 +1,7 @@
 package com.itrex.java.lab.entity;
 
 import javax.persistence.*;
-import javax.print.attribute.standard.MediaSize;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "role", schema = "public")
@@ -20,14 +17,13 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
 
-
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 
     public Integer getId() {
         return id;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 

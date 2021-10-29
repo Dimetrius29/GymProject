@@ -10,7 +10,7 @@ import java.util.List;
 public interface RoleRepository {
 
     List<Role> selectAll() throws GymException;
-    List<Role> getAllUserRoles(Integer userId) throws GymException, SQLException;
+    List<Role> getAllUserRoles(Integer userId) throws GymException, SQLException, NotFoundEx;
     Role selectById(Integer id) throws GymException, NotFoundEx;
     Role add(Role role) throws GymException;
     Role update(Role role) throws GymException;

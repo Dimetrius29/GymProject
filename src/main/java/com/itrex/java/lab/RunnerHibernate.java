@@ -1,9 +1,9 @@
 package com.itrex.java.lab;
 
 import com.itrex.java.lab.entity.Role;
-import com.itrex.java.lab.entity.Training;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
+import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
 import com.itrex.java.lab.repository.RoleRepository;
 import com.itrex.java.lab.repository.TrainingRepository;
@@ -15,15 +15,12 @@ import com.itrex.java.lab.repository.impl.hibernate.HibernateUserRepositoryImpl;
 import com.itrex.java.lab.service.FlywayService;
 import com.itrex.java.lab.util.HibernateUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RunnerHibernate {
 
-    public static void main(String[] args) throws GymException, SQLException {
+    public static void main(String[] args) throws GymException, NotFoundEx {
         System.out.println("===================START APP======================");
         System.out.println("================START MIGRATION===================");
         FlywayService flywayService = new FlywayService();
@@ -37,6 +34,7 @@ public class RunnerHibernate {
         RoleRepository roleRepository = new HibernateRoleRepositoryImpl(session);
         CoachRepository coachRepository = new HibernateCoachRepositoryImpl(session);
         TrainingRepository trainingRepository = new HibernateTrainingRepositoryImpl(session);
+
 
 //        Transaction transaction = null;
 //        try {
@@ -52,9 +50,22 @@ public class RunnerHibernate {
 //            }
 //            throw new GymException("Delete user EXCEPTION: ", ex);
 //        }
-//
+//        User user = new User();
+//        user.setName("test");
+//        user.setSurname("test");
+//        user.setLogin("test");
+//        user.setPassword("test");
+//        user.setPhone("+375445898855");
+//        user.setId(5);
+        userRepository.delete(1);
+        List<Role> roles = roleRepository.selectAll();
         List<User> users = userRepository.selectAll();
+        System.out.println(roles);
+//        userRepository.delete(2);
+
+        roleRepository.deleteRole(2);
         System.out.println(users);
+//        userRepository.selectById(1);
 
 
 //        List<Role> roles = roleRepository.selectAll();
@@ -80,10 +91,12 @@ public class RunnerHibernate {
 //        List<Training> trainings = trainingRepository.selectAll();
 //        System.out.println(trainings);
 
-        System.out.println("===========================");
-        System.out.println(userRepository.getAllUsersByRole("client"));
-        System.out.println("===========================");
-        System.out.println(roleRepository.getAllUserRoles(2));
+//        System.out.println("===========================");
+//        System.out.println(userRepository.getAllUsersByRole("client"));
+//        userRepository.assignRole(1,2);
+//        System.out.println(userRepository.getAllUsersByRole("client"));
+//        System.out.println("===========================");
+//        System.out.println(roleRepository.getAllUserRoles(2));
         System.out.println("=================CLOSE SESSION====================");
         session.close();
         System.out.println("=================SHUT DOWN APP====================");

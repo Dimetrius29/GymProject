@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS role
 (
-    id int IDENTITY NOT NULL,
+    id int IDENTITY NOT NULL PRIMARY KEY,
     name char(20) NOT NULL,
-    PRIMARY KEY (id),
     UNIQUE (name)
 );
 
@@ -20,7 +19,7 @@ CREATE TABLE IF NOT EXISTS user_role
     user_id int NOT NULL,
     role_id int NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id),
-    FOREIGN KEY (role_id) REFERENCES role (id),
+    FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE,
     PRIMARY KEY (user_id,role_id)
 );
 

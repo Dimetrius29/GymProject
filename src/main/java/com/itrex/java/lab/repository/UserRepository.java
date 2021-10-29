@@ -10,11 +10,11 @@ public interface UserRepository {
 
     List<User> selectAll() throws GymException;
     User selectById(Integer id) throws GymException, NotFoundEx;
-    List<User> getAllUsersByRole(String roleName) throws GymException;
-    void assignRole(Integer userId, Integer roleId) throws GymException;
+    List<User> getAllUsersByRole(String roleName) throws GymException, NotFoundEx;
+    void assignRole(Integer userId, Integer roleId) throws GymException, NotFoundEx;
     User add(User user) throws GymException;
     void addAll(List<User> users) throws GymException;
     User update(User user) throws GymException;
-    void delete(Integer id) throws GymException;
+    void delete(Integer id) throws GymException, NotFoundEx;
 }
 

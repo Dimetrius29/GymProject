@@ -1,11 +1,10 @@
-package com.itrex.java.lab.repository.impl;
+package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.RoleRepository;
-import com.itrex.java.lab.repository.impl.jdbc.JDBCRoleRepositoryImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,13 +12,12 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
-
+public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
     private final RoleRepository repository;
 
-    public JDBCRoleRepositoryImplTest() {
+    public HibernateRoleRepositoryImplTest() {
         super();
-        repository = new JDBCRoleRepositoryImpl(getConnectionPool());
+        repository = new HibernateRoleRepositoryImpl(getSession());
     }
 
     @Test
@@ -104,6 +102,7 @@ public class JDBCRoleRepositoryImplTest extends BaseRepositoryTest {
 
         //when
         role.setName("def");
+        repository.add(role);
         repository.update(role);
         String actual = role.getName();
         String expected = "def";

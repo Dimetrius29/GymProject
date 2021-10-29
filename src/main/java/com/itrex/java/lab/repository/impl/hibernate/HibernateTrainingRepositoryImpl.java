@@ -1,8 +1,11 @@
 package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.Training;
+import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.TrainingRepository;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.List;
 
@@ -14,26 +17,41 @@ public class HibernateTrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    public List<Training> selectAll() {
-        return session.createQuery("From Training", Training.class).list();
+    public List<Training> selectAll() throws GymException {
+        try {
+            return session.createQuery("From Training", Training.class).list();
+        } catch (Exception ex) {
+            throw new GymException(ex);
+        }
     }
 
     @Override
-    public Training add(Training training) {
-        session.save(training);
+    public Training add(Training training) throws GymException {
+        addTransaction(() -> session.save(training));
         return training;
     }
 
     @Override
-    public Training update(Training training) {
-        session.update(training);
+    public Training update(Training training) throws GymException {
+        addTransaction(() -> session.update(training));
         return training;
     }
 
     @Override
-    public void deleteTrainingByCoach(Integer coachId) {
-        session.createQuery("Delete From Training WHERE coach_id = :id")
+    public void deleteTrainingByCoach(Integer coachId) throws GymException {
+        addTransaction(() -> session.createQuery("Delete From Training WHERE coach_id = :id")
                 .setParameter("id", coachId)
-                .executeUpdate();
+                .executeUpdate());
+    }
+
+    private void addTransaction(Runnable runnable) throws GymException {
+        Transaction transaction = session.beginTransaction();
+        try {
+            runnable.run();
+            transaction.commit();
+        } catch (HibernateException ex) {
+            transaction.rollback();
+            throw new GymException(ex);
+        }
     }
 }

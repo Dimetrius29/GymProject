@@ -1,4 +1,4 @@
-package com.itrex.java.lab.repository.impl;
+package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
@@ -137,7 +137,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteUser_validData_shouldDeleteExistUser() throws GymException {
+    public void deleteUser_validData_shouldDeleteExistUser() throws GymException, NotFoundEx {
         //given
         int id = 1;
         int expected = 3;
