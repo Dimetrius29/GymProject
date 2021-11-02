@@ -2,16 +2,15 @@ package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.UserRepository;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
     private final UserRepository repository;
@@ -33,7 +32,7 @@ public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException, NotFoundEx {
+    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException {
         //given
         int id = 1;
         User expected = new User();
@@ -45,20 +44,16 @@ public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
         expected.setPhone("+375445855685");
 
         // when
-        User actual = repository.selectById(id);
-
+        Optional<User> optionalUser = repository.selectById(id);
+        User actual = optionalUser.get();
         //then
         assertEquals(actual, expected);
     }
 
     @Test
-    public void assignRole_validData_ShouldAddRoleForUserTest() throws GymException, NotFoundEx {
-        // when
-        repository.assignRole(1, 2);
-
-        // then
-        assertEquals(5, getSession().createSQLQuery("SELECT * FROM user_role;")
-                .getResultList().size());
+    public void assignRole_invalidData_ShouldReturnException() {
+        //given && when && then
+        assertThrows(GymException.class, () -> repository.assignRole(99, 1));
     }
 
     @Test
@@ -69,13 +64,13 @@ public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectById_invalidData_shouldReturnException() {
+    public void selectById_invalidData_shouldReturnException() throws GymException {
         //given && when && then
-        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
+        assertNotNull(repository.selectById(99));
     }
 
     @Test
-    public void addAll_validData_shouldAddAllUsersTest() throws GymException {
+    public void add_validData_shouldAddAllUsersTest() throws GymException {
         //given
         ArrayList<User> expected = new ArrayList<>();
         User user1 = new User();
@@ -138,7 +133,7 @@ public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteUser_validData_shouldDeleteExistUser() throws GymException, NotFoundEx {
+    public void deleteUser_validData_shouldDeleteExistUser() throws GymException {
         //given
         int id = 1;
         int expected = 3;
@@ -155,16 +150,10 @@ public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
     @Test
     public void update_validData_shouldReturnChangedUserTest() throws GymException {
         //given
-        User user = new User();
-        user.setId(5);
-        user.setLogin("test");
-        user.setPassword("test");
-        user.setName("test");
-        user.setSurname("test");
-        user.setPhone("test");
+        Optional<User> optionalUser = repository.selectById(2);
+        User user = optionalUser.get();
 
         //when
-        repository.add(user);
         user.setName("Pavel");
         repository.update(user);
         String actual = user.getName();

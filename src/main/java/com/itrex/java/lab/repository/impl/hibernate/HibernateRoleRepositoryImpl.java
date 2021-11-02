@@ -30,22 +30,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public List<Role> getAllUserRoles(Integer userId) throws GymException, NotFoundEx {
-        List roles = null;
-        try {
-            roles = session.createQuery("Select r from Role r JOIN r.users u Where u.id = :id")
-                    .setParameter("id", userId)
-                    .list();
-        } catch (Exception ex) {
-            throw new GymException(ex);
-        }
-        Optional<List> maybeRole = Optional.ofNullable(roles);
-        roles = maybeRole.orElseThrow(NotFoundEx::new);
-        return roles;
-    }
-
-    @Override
-    public Role selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<Role> selectById(Integer id) throws GymException {
         Role role = null;
         try {
             role = session.get(Role.class, id);
@@ -53,9 +38,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
         } catch (Exception ex) {
             throw new GymException(ex);
         }
-        Optional<Role> maybeRole = Optional.ofNullable(role);
-        role = maybeRole.orElseThrow(NotFoundEx::new);
-        return role;
+        return Optional.ofNullable(role);
     }
 
     @Override
@@ -70,18 +53,13 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
         return role;
     }
 
-    @Override
-    public void deleteRole(Integer id) throws GymException {
-        Role role = session.get(Role.class, id);
-        addTransaction(() -> session.delete(role));
-    }
 
     private void addTransaction(Runnable runnable) throws GymException {
         Transaction transaction = session.beginTransaction();
         try {
             runnable.run();
             transaction.commit();
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             transaction.rollback();
             throw new GymException(ex);
         }

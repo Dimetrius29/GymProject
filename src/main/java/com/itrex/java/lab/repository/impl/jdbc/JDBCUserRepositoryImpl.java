@@ -53,7 +53,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<User> selectById(Integer id) throws GymException {
         User user = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
@@ -64,13 +64,11 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         } catch (SQLException ex) {
             throw new GymException("SELECT USER BY ID EXCEPTION: ", ex);
         }
-        Optional<User> maybeUser = Optional.ofNullable(user);
-        user = maybeUser.orElseThrow(NotFoundEx::new);
-        return user;
+        return Optional.ofNullable(user);
     }
 
     @Override
-    public List<User> getAllUsersByRole(String roleName) throws GymException {
+    public Optional<List> getAllUsersByRole(String roleName) throws GymException {
         List<User> users = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS_BY_ROLE)) {
@@ -85,7 +83,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         } catch (SQLException ex) {
             throw new GymException("GET ALL USER BY ROLE EXCEPTION: ", ex);
         }
-        return users;
+        return Optional.ofNullable(users);
     }
 
     @Override
@@ -150,6 +148,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(Integer id) throws GymException {
+        User user = null;
         deleteUserFromLinkedTableById(id);
         deleteUserFromTrainingById(id);
         try (Connection connection = dataSource.getConnection();

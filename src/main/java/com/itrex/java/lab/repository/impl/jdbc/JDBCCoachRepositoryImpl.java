@@ -53,7 +53,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public Coach selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<Coach> selectById(Integer id) throws GymException {
         Coach coach = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
@@ -64,9 +64,7 @@ public class JDBCCoachRepositoryImpl implements CoachRepository {
         } catch (SQLException ex) {
             throw new GymException("SELECT COACH BY ID EXCEPTION: ", ex);
         }
-        Optional<Coach> maybeCoach = Optional.ofNullable(coach);
-        coach = maybeCoach.orElseThrow(NotFoundEx::new);
-        return coach;
+        return Optional.ofNullable(coach);
     }
 
     @Override

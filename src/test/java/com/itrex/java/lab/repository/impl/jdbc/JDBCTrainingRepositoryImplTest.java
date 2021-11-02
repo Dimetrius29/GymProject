@@ -2,13 +2,11 @@ package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.Training;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.TrainingRepository;
 
 import java.util.List;
 
-import com.itrex.java.lab.repository.impl.jdbc.JDBCTrainingRepositoryImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -1,9 +1,7 @@
 package com.itrex.java.lab.repository.impl.hibernate;
 
-import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Training;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.TrainingRepository;
 import org.junit.Test;
@@ -40,7 +38,7 @@ public class HibernateTrainingRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteTrainingByCoach_validData_shouldDeleteExistTrainingTest() throws GymException{
+    public void deleteTrainingByCoach_validData_shouldDeleteExistTrainingTest() throws GymException {
         //given
         int coachId = 1;
         int expected = 2;
@@ -55,18 +53,9 @@ public class HibernateTrainingRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteTrainingByCoach_inValidData_shouldDeleteTrainingsTest() throws GymException {
+    public void deleteTrainingByCoach_inValidData_shouldThrowExceptionTest() {
         //given && when && then
-
-        int id = 1;
-        int expected = 2;
-
-        // when
-        repository.deleteTrainingByCoach(id);
-        List<Training> trainings = repository.selectAll();
-        int actual = trainings.size();
-
-        //then
-        assertEquals(actual, expected);
+        cleanDB();
+        assertThrows(GymException.class, () -> repository.deleteTrainingByCoach(2));
     }
 }

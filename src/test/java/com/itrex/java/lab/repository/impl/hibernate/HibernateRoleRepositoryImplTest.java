@@ -2,15 +2,14 @@ package com.itrex.java.lab.repository.impl.hibernate;
 
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.RoleRepository;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
     private final RoleRepository repository;
@@ -33,7 +32,7 @@ public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectRoleTest() throws GymException, NotFoundEx {
+    public void selectByID_validData_shouldReturnCorrectRoleTest() throws GymException {
         //given
         int id = 1;
         Role expected = new Role();
@@ -41,16 +40,16 @@ public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
         expected.setName("admin");
 
         // when
-        Role actual = repository.selectById(id);
-
+        Optional<Role> optionalRole = repository.selectById(id);
+        Role actual = optionalRole.get();
         //then
         assertEquals(actual, expected);
     }
 
     @Test
-    public void selectById_invalidData_shouldReturnException() {
+    public void selectById_invalidData_shouldReturnException() throws GymException {
         //given && when && then
-        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
+        assertNotNull(repository.selectById(99));
     }
 
     @Test
@@ -79,30 +78,13 @@ public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteRole_validData_shouldDeleteExistRole() throws GymException {
-        //given
-        int id = 1;
-        int expected = 1;
-
-        // when
-        repository.deleteRole(id);
-        List<Role> roles = repository.selectAll();
-        int actual = roles.size();
-
-        //then
-        assertEquals(actual, expected);
-    }
-
-    @Test
     public void update_validData_shouldReturnChangedRoleTest() throws GymException {
         //given
-        Role role = new Role();
-        role.setId(3);
-        role.setName("test");
+        Optional<Role> optionalRole = repository.selectById(2);
+        Role role = optionalRole.get();
 
         //when
         role.setName("def");
-        repository.add(role);
         repository.update(role);
         String actual = role.getName();
         String expected = "def";

@@ -57,13 +57,12 @@ public class RunnerHibernate {
 //        user.setPassword("test");
 //        user.setPhone("+375445898855");
 //        user.setId(5);
-        userRepository.delete(1);
+
         List<Role> roles = roleRepository.selectAll();
         List<User> users = userRepository.selectAll();
         System.out.println(roles);
-//        userRepository.delete(2);
+        userRepository.delete(2);
 
-        roleRepository.deleteRole(2);
         System.out.println(users);
 //        userRepository.selectById(1);
 

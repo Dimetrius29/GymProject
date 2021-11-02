@@ -2,18 +2,16 @@ package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import com.itrex.java.lab.repository.impl.jdbc.JDBCUserRepositoryImpl;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 
@@ -36,7 +34,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException, NotFoundEx {
+    public void selectByID_validData_shouldReturnCorrectUserTest() throws GymException {
         //given
         int id = 1;
         User expected = new User();
@@ -48,8 +46,8 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
         expected.setPhone("+375445855685");
 
         // when
-        User actual = repository.selectById(id);
-
+        Optional<User> optionalUser = repository.selectById(id);
+        User actual = optionalUser.get();
         //then
         assertEquals(actual, expected);
     }
@@ -68,9 +66,9 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectById_invalidData_shouldReturnException() {
+    public void selectById_invalidData_shouldReturnException() throws GymException {
         //given && when && then
-        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
+        assertNotNull(repository.selectById(99));
     }
 
     @Test
@@ -137,7 +135,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void deleteUser_validData_shouldDeleteExistUser() throws GymException, NotFoundEx {
+    public void deleteUser_validData_shouldDeleteExistUser() throws GymException {
         //given
         int id = 1;
         int expected = 3;
@@ -154,13 +152,8 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
     @Test
     public void update_validData_shouldReturnChangedUserTest() throws GymException {
         //given
-        User user = new User();
-        user.setId(5);
-        user.setLogin("test");
-        user.setPassword("test");
-        user.setName("test");
-        user.setSurname("test");
-        user.setPhone("test");
+        Optional<User> optionalUser = repository.selectById(2);
+        User user = optionalUser.get();
 
         //when
         user.setName("Pavel");

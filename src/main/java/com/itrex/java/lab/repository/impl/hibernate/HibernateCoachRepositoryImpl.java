@@ -4,7 +4,6 @@ import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -28,7 +27,7 @@ public class HibernateCoachRepositoryImpl implements CoachRepository {
     }
 
     @Override
-    public Coach selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<Coach> selectById(Integer id) throws GymException {
         Coach coach = null;
         try {
             coach = session.get(Coach.class, id);
@@ -36,9 +35,7 @@ public class HibernateCoachRepositoryImpl implements CoachRepository {
         } catch (Exception ex) {
             throw new GymException(ex);
         }
-        Optional<Coach> maybeCoach = Optional.ofNullable(coach);
-        coach = maybeCoach.orElseThrow(NotFoundEx::new);
-        return coach;
+        return Optional.ofNullable(coach);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class HibernateCoachRepositoryImpl implements CoachRepository {
         try {
             runnable.run();
             transaction.commit();
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             transaction.rollback();
             throw new GymException(ex);
         }

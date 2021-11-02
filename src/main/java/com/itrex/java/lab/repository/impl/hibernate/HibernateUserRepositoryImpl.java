@@ -1,5 +1,6 @@
 package com.itrex.java.lab.repository.impl.hibernate;
 
+import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
@@ -29,7 +30,7 @@ public class HibernateUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<User> selectById(Integer id) throws GymException {
         User user = null;
         try {
             user = session.get(User.class, id);
@@ -37,13 +38,11 @@ public class HibernateUserRepositoryImpl implements UserRepository {
         } catch (Exception ex) {
             throw new GymException(ex);
         }
-        Optional<User> maybeUser = Optional.ofNullable(user);
-        user = maybeUser.orElseThrow(NotFoundEx::new);
-        return user;
+        return Optional.ofNullable(user);
     }
 
     @Override
-    public List<User> getAllUsersByRole(String role) throws GymException, NotFoundEx {
+    public Optional<List> getAllUsersByRole(String role) throws GymException {
         List users = null;
         try {
             users = session.createQuery("Select u from User u JOIN u.roles r Where r.name = :roleName")
@@ -52,9 +51,7 @@ public class HibernateUserRepositoryImpl implements UserRepository {
         } catch (Exception ex) {
             throw new GymException(ex);
         }
-        Optional<List> maybeUser = Optional.ofNullable(users);
-        users = maybeUser.orElseThrow(NotFoundEx::new);
-        return users;
+        return Optional.ofNullable(users);
     }
 
     @Override
@@ -86,17 +83,9 @@ public class HibernateUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(Integer id) throws GymException, NotFoundEx {
-        User user = null;
-        try {
-            user = session.get(User.class, id);
-            Optional<User> maybeUser = Optional.ofNullable(user);
-            user = maybeUser.orElseThrow(NotFoundEx::new);
-            User finalUser = user;
-            addTransaction(() -> session.delete(finalUser));
-        } catch (Exception ex) {
-            throw new GymException(ex);
-        }
+    public void delete(Integer id) throws GymException {
+        User user = session.get(User.class, id);
+        addTransaction(() -> session.delete(user));
     }
 
     private void addTransaction(Runnable runnable) throws GymException {
@@ -104,7 +93,7 @@ public class HibernateUserRepositoryImpl implements UserRepository {
         try {
             runnable.run();
             transaction.commit();
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             transaction.rollback();
             throw new GymException(ex);
         }

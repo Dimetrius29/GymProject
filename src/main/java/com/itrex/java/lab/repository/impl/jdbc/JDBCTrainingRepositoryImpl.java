@@ -1,8 +1,9 @@
 package com.itrex.java.lab.repository.impl.jdbc;
 
+import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Training;
+import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.repository.CoachRepository;
 import com.itrex.java.lab.repository.TrainingRepository;
@@ -10,9 +11,10 @@ import com.itrex.java.lab.repository.TrainingRepository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.sql.DataSource;
 
-public class JDBCTrainingRepositoryImpl implements TrainingRepository{
+public class JDBCTrainingRepositoryImpl implements TrainingRepository {
 
     private static final String USER_ID_COLUMN = "user_id";
     private static final String COACH_ID_COLUMN = "coach_id";
@@ -40,15 +42,20 @@ public class JDBCTrainingRepositoryImpl implements TrainingRepository{
                 Training training = new Training();
                 UserRepository userRepository = new JDBCUserRepositoryImpl(dataSource);
                 CoachRepository coachRepository = new JDBCCoachRepositoryImpl(dataSource);
-                training.setUser(userRepository.selectById(resultSet.getInt(USER_ID_COLUMN)));
-                training.setCoach(coachRepository.selectById(resultSet.getInt(COACH_ID_COLUMN)));
+
+                Optional<User> user = userRepository.selectById(resultSet.getInt(USER_ID_COLUMN));
+                user.ifPresent(training::setUser);
+
+                Optional<Coach> coach = coachRepository.selectById(resultSet.getInt(COACH_ID_COLUMN));
+                coach.ifPresent(training::setCoach);
+
                 training.setDate(resultSet.getDate(DATE_INFO_COLUMN));
                 training.setStartTime(resultSet.getTime(START_TIME_COLUMN));
                 training.setEndTime(resultSet.getTime(END_TIME_COLUMN));
 
                 trainings.add(training);
             }
-        } catch (SQLException | GymException | NotFoundEx ex) {
+        } catch (SQLException | GymException  ex) {
             throw new GymException("SELECT ALL TRAININGS EXCEPTION: ", ex);
         }
         return trainings;

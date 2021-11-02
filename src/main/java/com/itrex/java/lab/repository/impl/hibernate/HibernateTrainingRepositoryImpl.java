@@ -49,7 +49,7 @@ public class HibernateTrainingRepositoryImpl implements TrainingRepository {
         try {
             runnable.run();
             transaction.commit();
-        } catch (HibernateException ex) {
+        } catch (Exception ex) {
             transaction.rollback();
             throw new GymException(ex);
         }

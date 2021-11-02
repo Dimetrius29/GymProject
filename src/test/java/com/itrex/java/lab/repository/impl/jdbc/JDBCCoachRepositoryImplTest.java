@@ -2,17 +2,15 @@ package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.CoachRepository;
-import com.itrex.java.lab.repository.impl.jdbc.JDBCCoachRepositoryImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
 
@@ -35,7 +33,7 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
     }
 
     @Test
-    public void selectByID_validData_shouldReturnCorrectCoachTest() throws GymException, NotFoundEx {
+    public void selectByID_validData_shouldReturnCorrectCoachTest() throws GymException {
         //given
         int id = 1;
         Coach expected = new Coach();
@@ -47,16 +45,16 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
         expected.setPriceOfActivity(23.50);
 
         // when
-        Coach actual = repository.selectById(id);
-
+        Optional<Coach> optionalCoach = repository.selectById(id);
+        Coach actual = optionalCoach.get();
         //then
         assertEquals(actual, expected);
     }
 
     @Test
-    public void selectById_invalidData_shouldThrowException() {
+    public void selectById_invalidData_shouldThrowException() throws GymException {
         //given && when && then
-        assertThrows(NotFoundEx.class, () -> repository.selectById(99));
+        assertNotNull(repository.selectById(99));
     }
 
     @Test
@@ -141,13 +139,8 @@ public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
     @Test
     public void update_validData_shouldReturnChangedCoachTest() throws GymException {
         //given
-        Coach coach = new Coach();
-        coach.setId(3);
-        coach.setName("test");
-        coach.setSurname("test");
-        coach.setPhone("test");
-        coach.setSpecialization("test");
-        coach.setPriceOfActivity(25.00);
+        Optional<Coach> optionalCoach = repository.selectById(2);
+        Coach coach = optionalCoach.get();
 
         //when
         coach.setName("Pasha");

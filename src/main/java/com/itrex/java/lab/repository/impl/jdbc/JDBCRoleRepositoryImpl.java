@@ -1,10 +1,7 @@
 package com.itrex.java.lab.repository.impl.jdbc;
 
-import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Role;
-import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.RoleRepository;
 
 import java.sql.Connection;
@@ -22,12 +19,9 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
     private static final String ID_COLUMN = "id";
     private static final String NAME_COLUMN = "name";
     private static final String SELECT_ALL_ROLES_QUERY = "SELECT * FROM role";
-    private static final String SELECT_ALL_ROLES_BY_USER_QUERY = "SELECT * FROM role WHERE id IN (SELECT role_id FROM user_role WHERE user_id=?)";
     private static final String SELECT_BY_ID_QUERY = "SELECT * FROM role WHERE id=";
     private static final String INSERT_ROLE_QUERY = "INSERT INTO role(name) VALUES (?)";
     private static final String UPDATE_ROLE_QUERY = "UPDATE role SET name=? WHERE id=?";
-    private static final String DELETE_ROLE_QUERY = "DELETE FROM role WHERE id=?";
-    private static final String DELETE_ROLE_FROM_USER_ROLE_QUERY = "DELETE FROM user_role WHERE role_id=?";
 
     private DataSource dataSource;
 
@@ -52,26 +46,7 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public List<Role> getAllUserRoles(Integer userId) throws GymException {
-        List<Role> roles = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ROLES_BY_USER_QUERY)) {
-            preparedStatement.setInt(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            {
-                while (resultSet.next()) {
-                    Role role = getRole(resultSet);
-                    roles.add(role);
-                }
-            }
-        } catch (SQLException ex) {
-            throw new GymException("GET ALL USER BY ROLE EXCEPTION: ", ex);
-        }
-        return roles;
-    }
-
-    @Override
-    public Role selectById(Integer id) throws GymException, NotFoundEx {
+    public Optional<Role> selectById(Integer id) throws GymException {
         Role role = null;
         try (Connection connection = dataSource.getConnection();
              Statement stm = connection.createStatement();
@@ -82,9 +57,8 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
         } catch (SQLException ex) {
             throw new GymException("SELECT ROLE BY ID: ", ex);
         }
-        Optional<Role> maybeRole = Optional.ofNullable(role);
-        role = maybeRole.orElseThrow(NotFoundEx::new);
-        return role;
+
+        return Optional.ofNullable(role);
     }
 
     @Override
@@ -108,28 +82,6 @@ public class JDBCRoleRepositoryImpl implements RoleRepository {
             throw new GymException("UPDATE ROLE EXCEPTION: ", ex);
         }
         return role;
-    }
-
-    @Override
-    public void deleteRole(Integer id) throws GymException {
-        deleteRoleFromLinkedTableById(id);
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ROLE_QUERY)) {
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            throw new GymException("DELETE ROLE EXCEPTION: ", ex);
-        }
-    }
-
-    private void deleteRoleFromLinkedTableById(Integer userId) throws GymException {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ROLE_FROM_USER_ROLE_QUERY)) {
-            preparedStatement.setInt(1, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            throw new GymException("DELETE USER FROM USER ROLE EXCEPTION: ", ex);
-        }
     }
 
     private Role insertRole(Role role, Connection connection) throws SQLException {
