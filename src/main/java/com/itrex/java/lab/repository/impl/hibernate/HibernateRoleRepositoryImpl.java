@@ -1,12 +1,8 @@
 package com.itrex.java.lab.repository.impl.hibernate;
 
-import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.entity.Role;
-import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.RoleRepository;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

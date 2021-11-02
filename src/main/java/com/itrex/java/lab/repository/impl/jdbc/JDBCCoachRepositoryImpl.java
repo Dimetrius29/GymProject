@@ -2,7 +2,6 @@ package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.Coach;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 import com.itrex.java.lab.repository.CoachRepository;
 
 import java.sql.Connection;
