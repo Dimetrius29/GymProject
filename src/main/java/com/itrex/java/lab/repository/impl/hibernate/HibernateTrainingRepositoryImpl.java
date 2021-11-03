@@ -5,9 +5,11 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.TrainingRepository;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class HibernateTrainingRepositoryImpl implements TrainingRepository {
     private final Session session;
 

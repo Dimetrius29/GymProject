@@ -1,5 +1,6 @@
 package com.itrex.java.lab;
 
+import com.itrex.java.lab.config.MyApplicationContextConfiguration;
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.exception.GymException;
@@ -15,54 +16,24 @@ import com.itrex.java.lab.repository.impl.hibernate.HibernateUserRepositoryImpl;
 import com.itrex.java.lab.service.FlywayService;
 import com.itrex.java.lab.util.HibernateUtil;
 import org.hibernate.Session;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;
 
 public class RunnerHibernate {
 
-    public static void main(String[] args) throws GymException, NotFoundEx {
+    public static void main(String[] args) throws GymException {
         System.out.println("===================START APP======================");
         System.out.println("================START MIGRATION===================");
-        FlywayService flywayService = new FlywayService();
-        flywayService.migrate();
-
         System.out.println("============CREATE SESSION================");
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MyApplicationContextConfiguration.class);
+        applicationContext.getBean(FlywayService.class);
         System.out.println("=============CREATE UserRepository================");
+        UserRepository userRepository = applicationContext.getBean(UserRepository.class);
 
-        UserRepository userRepository = new HibernateUserRepositoryImpl(session);
-        RoleRepository roleRepository = new HibernateRoleRepositoryImpl(session);
-        CoachRepository coachRepository = new HibernateCoachRepositoryImpl(session);
-        TrainingRepository trainingRepository = new HibernateTrainingRepositoryImpl(session);
-
-
-//        Transaction transaction = null;
-//        try {
-//            transaction = session.beginTransaction();
-//
-//            userRepository.delete(1);
-//            System.out.println("User with id=1 deleted");
-//
-//            transaction.commit();
-//        } catch (Exception ex) {
-//            if (transaction != null) {
-//                transaction.rollback();
-//            }
-//            throw new GymException("Delete user EXCEPTION: ", ex);
-//        }
-//        User user = new User();
-//        user.setName("test");
-//        user.setSurname("test");
-//        user.setLogin("test");
-//        user.setPassword("test");
-//        user.setPhone("+375445898855");
-//        user.setId(5);
-
-        List<Role> roles = roleRepository.selectAll();
-        List<User> users = userRepository.selectAll();
-        System.out.println(roles);
         userRepository.delete(2);
-
+        List<User> users = userRepository.selectAll();
         System.out.println(users);
 //        userRepository.selectById(1);
 
@@ -97,7 +68,6 @@ public class RunnerHibernate {
 //        System.out.println("===========================");
 //        System.out.println(roleRepository.getAllUserRoles(2));
         System.out.println("=================CLOSE SESSION====================");
-        session.close();
         System.out.println("=================SHUT DOWN APP====================");
     }
 }

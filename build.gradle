@@ -20,6 +20,8 @@ dependencies {
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.0.0'
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.0.Final'
+    implementation 'org.springframework:spring-core:5.3.11'
+    implementation 'org.springframework:spring-context:5.3.11'
 }
 
 test {
