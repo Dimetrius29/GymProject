@@ -7,6 +7,7 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.repository.CoachRepository;
 import com.itrex.java.lab.repository.TrainingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 
+@Repository
 public class JDBCTrainingRepositoryImpl implements TrainingRepository {
 
     private static final String USER_ID_COLUMN = "user_id";

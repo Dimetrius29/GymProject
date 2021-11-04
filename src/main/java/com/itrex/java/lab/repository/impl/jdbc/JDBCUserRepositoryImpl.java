@@ -1,10 +1,9 @@
 package com.itrex.java.lab.repository.impl.jdbc;
 
 import com.itrex.java.lab.entity.User;
-import com.itrex.java.lab.repository.RoleRepository;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 
+@Repository
 public class JDBCUserRepositoryImpl implements UserRepository {
     private static final String ID_COLUMN = "id";
     private static final String LOGIN_COLUMN = "login";

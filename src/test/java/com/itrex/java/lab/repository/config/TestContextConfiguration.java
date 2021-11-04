@@ -1,4 +1,4 @@
-package com.itrex.java.lab.config;
+package com.itrex.java.lab.repository.config;
 
 import static com.itrex.java.lab.properties.Properties.H2_PASSWORD;
 import static com.itrex.java.lab.properties.Properties.H2_URL;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.*;
 
 @Configuration
 @ComponentScan("com.itrex.java.lab.repository")
-public class MyApplicationContextConfiguration {
+public class TestContextConfiguration {
 
     @Bean(initMethod = "migrate")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

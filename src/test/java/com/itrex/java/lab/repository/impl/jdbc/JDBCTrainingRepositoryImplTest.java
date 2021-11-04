@@ -8,18 +8,15 @@ import com.itrex.java.lab.repository.TrainingRepository;
 import java.util.List;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
 
-    private final TrainingRepository repository;
-
-    public JDBCTrainingRepositoryImplTest() {
-        super();
-        repository = new JDBCTrainingRepositoryImpl(getConnectionPool());
-    }
+    @Autowired
+    private TrainingRepository repository;
 
     @Test
     public void selectAll_validData_shouldReturnExistUsersTraining() throws GymException {

@@ -5,12 +5,14 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.RoleRepository;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Primary
 public class HibernateRoleRepositoryImpl implements RoleRepository {
     private final Session session;
 
@@ -29,7 +31,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 
     @Override
     public Optional<Role> selectById(Integer id) throws GymException {
-        Role role = null;
+        Role role;
         try {
             role = session.get(Role.class, id);
 

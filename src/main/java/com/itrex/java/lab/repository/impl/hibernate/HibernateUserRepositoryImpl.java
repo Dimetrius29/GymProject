@@ -6,12 +6,14 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Primary
 public class HibernateUserRepositoryImpl implements UserRepository {
     private final Session session;
 
@@ -30,7 +32,7 @@ public class HibernateUserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> selectById(Integer id) throws GymException {
-        User user = null;
+        User user;
         try {
             user = session.get(User.class, id);
 

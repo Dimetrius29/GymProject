@@ -2,7 +2,6 @@ package com.itrex.java.lab.repository;
 
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.exception.GymException;
-import com.itrex.java.lab.exception.NotFoundEx;
 
 import java.util.List;
 import java.util.Optional;

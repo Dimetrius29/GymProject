@@ -5,6 +5,7 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.RoleRepository;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,12 +13,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class HibernateRoleRepositoryImplTest extends BaseRepositoryTest {
-    private final RoleRepository repository;
 
-    public HibernateRoleRepositoryImplTest() {
-        super();
-        repository = new HibernateRoleRepositoryImpl(getSession());
-    }
+    @Autowired
+    private RoleRepository repository;
 
     @Test
     public void selectAll_validData_shouldReturnExistRolesTest() throws GymException {

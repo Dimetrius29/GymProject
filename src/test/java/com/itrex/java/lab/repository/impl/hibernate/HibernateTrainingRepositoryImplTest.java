@@ -5,6 +5,7 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.TrainingRepository;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -12,12 +13,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 public class HibernateTrainingRepositoryImplTest extends BaseRepositoryTest {
-    private final TrainingRepository repository;
 
-    public HibernateTrainingRepositoryImplTest() {
-        super();
-        repository = new HibernateTrainingRepositoryImpl(getSession());
-    }
+    @Autowired
+    private TrainingRepository repository;
 
     @Test
     public void selectAll_validData_shouldReturnExistUsersTraining() throws GymException {

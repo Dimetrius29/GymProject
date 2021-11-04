@@ -5,12 +5,14 @@ import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.CoachRepository;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Primary
 public class HibernateCoachRepositoryImpl implements CoachRepository {
     private final Session session;
 
@@ -29,7 +31,7 @@ public class HibernateCoachRepositoryImpl implements CoachRepository {
 
     @Override
     public Optional<Coach> selectById(Integer id) throws GymException {
-        Coach coach = null;
+        Coach coach;
         try {
             coach = session.get(Coach.class, id);
 

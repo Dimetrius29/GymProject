@@ -10,17 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
 public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 
-    private final UserRepository repository;
-
-    public JDBCUserRepositoryImplTest() {
-        super();
-        repository = new JDBCUserRepositoryImpl(getConnectionPool());
-    }
+    @Autowired
+    private UserRepository repository;
 
     @Test
     public void selectAll_validData_shouldReturnExistUsersTest() throws GymException {
