@@ -9,12 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 public class JDBCTrainingRepositoryImplTest extends BaseRepositoryTest {
-
+    @Qualifier(value = "JDBCTrainingRepository")
     @Autowired
     private TrainingRepository repository;
 

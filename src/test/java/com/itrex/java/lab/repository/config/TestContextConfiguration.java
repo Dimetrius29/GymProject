@@ -6,8 +6,7 @@ import static com.itrex.java.lab.properties.Properties.H2_USER;
 import static com.itrex.java.lab.properties.Properties.MIGRATIONS_LOCATION;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.hibernate.Session;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.*;
 
 @Configuration
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.*;
 public class TestContextConfiguration {
 
     @Bean(initMethod = "migrate")
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public Flyway flyway() {
         Flyway flyway = Flyway.configure().dataSource(H2_URL, H2_USER, H2_PASSWORD).locations(MIGRATIONS_LOCATION)
                 .load();
@@ -24,8 +22,8 @@ public class TestContextConfiguration {
 
     @Bean
     @DependsOn("flyway")
-    public Session session() {
-        return new org.hibernate.cfg.Configuration().configure().buildSessionFactory().openSession();
+    public SessionFactory sessionFactory() {
+        return new org.hibernate.cfg.Configuration().configure().buildSessionFactory();
     }
 
     @Bean

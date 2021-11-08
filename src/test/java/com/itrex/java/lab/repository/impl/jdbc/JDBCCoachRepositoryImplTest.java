@@ -6,6 +6,7 @@ import com.itrex.java.lab.repository.BaseRepositoryTest;
 import com.itrex.java.lab.repository.CoachRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,9 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
 
+public class JDBCCoachRepositoryImplTest extends BaseRepositoryTest {
+    @Qualifier(value = "JDBCCoachRepository")
     @Autowired
     private CoachRepository repository;
 

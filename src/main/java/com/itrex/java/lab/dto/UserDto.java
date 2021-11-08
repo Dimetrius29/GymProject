@@ -1,50 +1,15 @@
-package com.itrex.java.lab.entity;
+package com.itrex.java.lab.dto;
 
-import javax.persistence.*;
-import java.util.*;
+import java.util.Objects;
 
-@Entity
-@Table(name = "user", schema = "public")
-public class User {
+public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
-
-    @Column(name = "login")
     private String login;
-
-    @Column(name = "password")
     private String password;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "surname")
     private String surname;
-
-    @Column(name = "phone")
     private String phone;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Training> trainings = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_role", schema = "public",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")}
-    )
-    private Set<Role> roles = new HashSet<>();
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
     public Integer getId() {
         return id;
@@ -96,7 +61,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "\nUser{" +
+        return "\nUserDTO{" +
                 "id=" + id +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
@@ -110,8 +75,8 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id.equals(user.id) && login.equals(user.login) && password.equals(user.password) && name.equals(user.name) && surname.equals(user.surname) && phone.equals(user.phone);
+        UserDto userDTO = (UserDto) o;
+        return id.equals(userDTO.id) && login.equals(userDTO.login) && password.equals(userDTO.password) && name.equals(userDTO.name) && surname.equals(userDTO.surname) && phone.equals(userDTO.phone);
     }
 
     @Override

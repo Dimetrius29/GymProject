@@ -3,6 +3,7 @@ package com.itrex.java.lab.repository.impl.jdbc;
 import com.itrex.java.lab.entity.Role;
 import com.itrex.java.lab.exception.GymException;
 import com.itrex.java.lab.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 @Repository
+@Qualifier("JDBCRoleRepository")
 public class JDBCRoleRepositoryImpl implements RoleRepository {
 
     private static final String ID_COLUMN = "id";

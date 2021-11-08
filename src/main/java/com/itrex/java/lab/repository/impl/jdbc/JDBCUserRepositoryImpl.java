@@ -3,6 +3,7 @@ package com.itrex.java.lab.repository.impl.jdbc;
 import com.itrex.java.lab.entity.User;
 import com.itrex.java.lab.repository.UserRepository;
 import com.itrex.java.lab.exception.GymException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 
+@Qualifier("JDBCUserRepository")
 @Repository
 public class JDBCUserRepositoryImpl implements UserRepository {
     private static final String ID_COLUMN = "id";
